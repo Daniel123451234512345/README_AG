@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>README Generator</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>README Generator</h1>
+      <p class="subtitle">Paste your code below and get a README instantly</p>
+
+      <div class="main-layout">
+        <div class="panel">
+          <h2>Your Code</h2>
+          <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+          <button id="generateBtn">Generate README</button>
+        </div>
+
+        <div class="panel" id="output">
+          <div class="output-header">
+            <h2>Preview</h2>
+            <div class="output-buttons">
+              <button id="copyBtn">Copy Markdown</button>
+              <button id="downloadBtn">Download .md</button>
+            </div>
+          </div>
+          <div id="readmePreview" class="readme-preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
