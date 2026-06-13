@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const OpenAI = require("openai");
@@ -8,7 +10,7 @@ app.use(express.json());
 app.use(express.static(__dirname));
 
 const openai = new OpenAI({
-  apiKey: "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",
+  apiKey: process.env.NVIDIA_API_KEY,
   baseURL: "https://integrate.api.nvidia.com/v1"
 });
 
