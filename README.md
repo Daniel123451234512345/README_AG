@@ -32,7 +32,7 @@ This application provides a simple REST API endpoint where users can submit thei
 
 1. **Start the server:**
    ```bash
-   node index.js
+   node server.js
    ```
    The server will start on `http://localhost:3000`.
 
