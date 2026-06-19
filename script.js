@@ -5,6 +5,33 @@ const codeInput = document.getElementById("codeInput");
 const output = document.getElementById("output");
 const readmePreview = document.getElementById("readmePreview");
 
+
+document.getElementById('fetchRepoBtn').addEventListener('click', async () => {
+  const repoUrl = document.getElementById('repoUrl').value.trim();
+  if (!repoUrl) return alert('Please enter a GitHub URL');
+
+  const fetchBtn = document.getElementById('fetchRepoBtn');
+  fetchBtn.textContent = 'Fetching...';
+  fetchBtn.disabled = true;
+
+  try {
+    const res = await fetch('/fetch-github', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ repoUrl })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    document.getElementById('codeInput').value = data.code;
+  } catch (err) {
+    alert('Error fetching repo: ' + err.message);
+  } finally {
+    fetchBtn.textContent = 'Fetch Repo';
+    fetchBtn.disabled = false;
+  }
+});
+
+
 let rawMarkdown = "";
 
 generateBtn.addEventListener("click", async () => {

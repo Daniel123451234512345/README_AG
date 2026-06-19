@@ -45,4 +45,43 @@ app.post("/generate", async (req, res) => {
   }
 });
 
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
+app.post("/fetch-github", async (req, res) => {
+  const { repoUrl } = req.body;
+  try {
+    const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+    if (!match) return res.status(400).json({ error: "Invalid GitHub URL" });
+    const [, owner, repo] = match;
+
+    const treeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`, {
+      headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+    });
+    const treeData = await treeRes.json();
+
+    const allowed = ['.js', '.ts', '.py', '.html', '.css', '.json', '.md'];
+    const ignored = ['node_modules', 'package-lock.json', '.min.js'];
+    const files = treeData.tree.filter(f =>
+      f.type === 'blob' &&
+      allowed.some(ext => f.path.endsWith(ext)) &&
+      !ignored.some(ig => f.path.includes(ig))
+    );
+
+    const contents = await Promise.all(files.map(async (f) => {
+      const r = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/HEAD/${f.path}`, {
+        headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+      });
+      const text = await r.text();
+      return `// FILE: ${f.path}\n${text}`;
+    }));
+
+    res.json({ code: contents.join('\n\n') });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch repo" });
+  }
+});
+
+
 app.listen(3000, () => console.log("Server running on http://localhost:3000"));
+
